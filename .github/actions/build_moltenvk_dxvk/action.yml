@@ -32,7 +32,7 @@ runs:
       shell: bash
       run: |
         pushd ${{ inputs.crossover-source }}/moltenvk
-        ./fetchDependencies --macos
+        ./fetchDependencies --macos --spirv-cross-root ${{ env.SPIRV_CROSS_ROOT }}
         make macos
         popd
 
