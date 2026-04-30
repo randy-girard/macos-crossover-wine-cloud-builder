@@ -17,9 +17,9 @@ runs:
     - name: Applying loader patches to NTDLL
       shell: bash
       run: |
-        pushd ${{ inputs.crossover-source }}
-        patch < ${GITHUB_WORKSPACE}/0004-loader-changes-for-rosetta-x87.patch
-        patch < ${GITHUB_WORKSPACE}/0005-loader-changes-for-disable-nx-compat.patch
+        pushd ${{ github.workspace }}
+        patch < ${{ github.workspace }}/0004-loader-changes-for-rosetta-x87.patch
+        patch < ${{ github.workspace }}/0005-loader-changes-for-disable-nx-compat.patch
         popd
 
     ############ Build and Install MoltenVK ##############
