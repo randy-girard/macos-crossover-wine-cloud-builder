@@ -1,0 +1,39 @@
+--- sources/wine/dlls/ntdll/unix/loader.c	2026-04-30 11:10:18
++++ sources/wine/dlls/ntdll/unix/loader.c	2026-04-30 11:10:29
+@@ -651,8 +651,9 @@
+ #endif
+ 
+ 
+-static void preloader_exec( char **argv, const char *image_path )
++static void preloader_exec( char **argv, const char *image_path, WORD machine )
+ {
++    char *path;
+ #ifdef HAVE_WINE_PRELOADER
+     asprintf( &argv[0], "%s-preloader", argv[1] );
+ #ifdef __APPLE__
+@@ -672,6 +673,12 @@
+     execv( argv[0], argv );
+     free( argv[0] );
+ #endif
++    path = getenv( "ROSETTA_X87_PATH" );
++    if (path && machine == IMAGE_FILE_MACHINE_I386) {
++        argv[0] = strdup( path );
++        execv( argv[0], argv );
++    } else
++        execv( argv[1], argv + 1 );
+ 
+ #if defined(__APPLE__) && !defined(HAVE_WINE_PRELOADER)
+     /* CW HACK 22144: Create and exec a more descriptively-named link to the loader,
+@@ -693,10 +700,10 @@
+ 
+     putenv( noexec );
+ 
+-    if (((argv[1] = get_alternate_wineloader( machine )))) preloader_exec( argv, image_path );
++    if (((argv[1] = get_alternate_wineloader( machine )))) preloader_exec( argv, image_path, machine );
+ 
+     argv[1] = strdup( wineloader );
+-    preloader_exec( argv, image_path );
++    preloader_exec( argv, image_path, machine );
+     return STATUS_INVALID_IMAGE_FORMAT;
+ }
+ 
