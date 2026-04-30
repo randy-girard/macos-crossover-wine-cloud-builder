@@ -25,7 +25,7 @@ runs:
     - name: Get Spirv
       shell: bash
       run: |
-        git clone https://github.com/randy-girard/SPIRV-Cross.git ${{ env.SPIRV_CROSS_ROOT }}
+        git clone https://github.com/KhronosGroup/SPIRV-Cross.git ${{ env.SPIRV_CROSS_ROOT }}
 
     ############ Build and Install MoltenVK ##############
     - name: Build MoltenVK
