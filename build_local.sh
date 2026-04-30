@@ -58,9 +58,7 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin
 begingroup "Installing Dependencies"
 # build dependencies
 
-rm /usr/local/bin/idle3
-
-brew install \
+brew install -f \
     bison \
     mingw-w64 \
     llvm \
@@ -68,14 +66,14 @@ brew install \
     mesa
 
 # runtime dependencies for crossover-wine
-brew install \
+brew install -f \
     freetype \
     gnutls \
     molten-vk \
     sdl2
 
 if [[ ${CX_MAJOR} < 22 ]]; then
-    brew install \
+    brew install -f \
         faudio \
         libpng \
         mpg123
