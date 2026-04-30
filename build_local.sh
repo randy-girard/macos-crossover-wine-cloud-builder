@@ -58,26 +58,24 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin
 begingroup "Installing Dependencies"
 # build dependencies
 
-brew link --overwrite python@3.14
-brew install -f \
-    bison \
-    mingw-w64 \
-    llvm \
-    pkgconfig \
-    mesa
+brew install bison || true
+brew install mingw-w64 || true
+brew install llvm || true
+brew install pkgconfig || true
+brew install mesa || true
 
 # runtime dependencies for crossover-wine
-brew install -f \
+brew install \
     freetype \
     gnutls \
     molten-vk \
     sdl2
 
 if [[ ${CX_MAJOR} < 22 ]]; then
-    brew install -f \
+    brew install \
         faudio \
         libpng \
-        mpg123
+        mpg123 || true
 fi
 endgroup
 
