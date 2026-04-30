@@ -1,10 +1,6 @@
 name: Wine-Crossover-MacOS-local
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
 
 env:
