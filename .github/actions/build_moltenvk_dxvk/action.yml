@@ -25,16 +25,14 @@ runs:
     - name: Get Spirv
       shell: bash
       run: |
-        pushd ${{ inputs.crossover-source }}
-        git clone https://github.com/randy-girard/SPIRV-Cross.git ${{ inputs.crossover-source }}/SPIRV-Cross
-        popd
+        git clone https://github.com/randy-girard/SPIRV-Cross.git ${{ env.SPIRV_CROSS_ROOT }}
 
     ############ Build and Install MoltenVK ##############
     - name: Build MoltenVK
       shell: bash
       run: |
         pushd ${{ inputs.crossover-source }}/moltenvk
-        SPIRV_CROSS_ROOT=${{ inputs.crossover-source }}/SPIRV-Cross ./fetchDependencies --macos
+        ./fetchDependencies --macos
         make macos
         popd
 
