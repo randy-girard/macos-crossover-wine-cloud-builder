@@ -58,6 +58,7 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin
 begingroup "Installing Dependencies"
 # build dependencies
 
+brew link --overwrite python@3.14
 brew install -f \
     bison \
     mingw-w64 \
