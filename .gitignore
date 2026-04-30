@@ -7,3 +7,4 @@ install
 build
 .DS_Store
 *.gz
+upload

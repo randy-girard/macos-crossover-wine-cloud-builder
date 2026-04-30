@@ -234,64 +234,64 @@ popd
 endgroup
 
 
-# begingroup "Configure wine32on64-${CROSS_OVER_VERSION}"
-# mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
-# pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
-# ${WINE_CONFIGURE} \
-#     --disable-option-checking \
-#     --enable-win32on64 \
-#     --disable-winedbg \
-#     --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
-#     --disable-tests \
-#     --without-alsa \
-#     --without-capi \
-#     --with-coreaudio \
-#     --with-cups \
-#     --without-dbus \
-#     --without-fontconfig \
-#     --with-freetype \
-#     --with-gettext \
-#     --without-gettextpo \
-#     --without-gphoto \
-#     --with-gnutls \
-#     --without-gssapi \
-#     --without-gstreamer \
-#     --without-inotify \
-#     --without-krb5 \
-#     --with-mingw \
-#     --without-netapi \
-#     --with-opencl \
-#     --with-opengl \
-#     --without-oss \
-#     --with-pcap \
-#     --with-pthread \
-#     --without-pulse \
-#     --without-sane \
-#     --with-sdl \
-#     --without-udev \
-#     --with-unwind \
-#     --without-usb \
-#     --without-v4l2 \
-#     --without-x \
-#     --without-vulkan \
-#     --disable-vulkan_1 \
-#     --disable-winevulkan
-# popd
-# endgroup
+begingroup "Configure wine32on64-${CROSS_OVER_VERSION}"
+mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
+pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
+${WINE_CONFIGURE} \
+    --disable-option-checking \
+    --enable-win32on64 \
+    --disable-winedbg \
+    --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
+    --disable-tests \
+    --without-alsa \
+    --without-capi \
+    --with-coreaudio \
+    --with-cups \
+    --without-dbus \
+    --without-fontconfig \
+    --with-freetype \
+    --with-gettext \
+    --without-gettextpo \
+    --without-gphoto \
+    --with-gnutls \
+    --without-gssapi \
+    --without-gstreamer \
+    --without-inotify \
+    --without-krb5 \
+    --with-mingw \
+    --without-netapi \
+    --with-opencl \
+    --with-opengl \
+    --without-oss \
+    --with-pcap \
+    --with-pthread \
+    --without-pulse \
+    --without-sane \
+    --with-sdl \
+    --without-udev \
+    --with-unwind \
+    --without-usb \
+    --without-v4l2 \
+    --without-x \
+    --without-vulkan \
+    --disable-vulkan_1 \
+    --disable-winevulkan
+popd
+endgroup
 
 
-# begingroup "Build wine32on64-${CROSS_OVER_VERSION}"
-# pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
-# make -k -j$(sysctl -n hw.activecpu 2>/dev/null)
-# popd
-# endgroup
+begingroup "Build wine32on64-${CROSS_OVER_VERSION}"
+pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
+make -k -j$(sysctl -n hw.activecpu 2>/dev/null)
+popd
+endgroup
 
 
-# begingroup "Install wine32on64-${CROSS_OVER_VERSION}"
-# pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
-# make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
-# popd
-# endgroup
+begingroup "Install wine32on64-${CROSS_OVER_VERSION}"
+pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
+make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
+popd
+endgroup
 
 
 begingroup "Install wine64-${CROSS_OVER_VERSION}"
