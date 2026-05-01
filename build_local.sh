@@ -242,7 +242,8 @@ endgroup
 
 begingroup "Copying libMoltenVK.dylib for wine-${CROSS_OVER_VERSION}"
 pushd ${INSTALLROOT}
-cp ${GITHUB_WORKSPACE}/libMoltenVK.dylib ${WINE_INSTALLATION}/usr/local/lib/wine/x86_64-unix/libMoltenVK.dylib
+cp ${GITHUB_WORKSPACE}/Libraries/libMoltenVK.dylib ${WINE_INSTALLATION}/usr/local/lib/wine/x86_64-unix/libMoltenVK.dylib
+cp ${GITHUB_WORKSPACE}/Libraries/libEGL.1.dylib ${WINE_INSTALLATION}/usr/local/lib/wine/x86_64-unix/libEGL.1.dylib
 popd
 endgroup
 
