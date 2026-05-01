@@ -58,37 +58,38 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin
 begingroup "Installing Dependencies"
 # build dependencies
 
-brew install bison || true
-brew install mingw-w64 || true
-brew install llvm || true
-brew install pkgconfig || true
-brew install mesa || true
+/usr/local/bin/brew install bison \
+    mingw-w64 \
+    llvm \
+    pkgconfig \
+    mesa
 
-# runtime dependencies for crossover-wine
-brew install \
+    # runtime dependencies for crossover-wine
+/usr/local/bin/brew install \
     freetype \
     gnutls \
     molten-vk \
     sdl2
 
 if [[ ${CX_MAJOR} < 22 ]]; then
-    brew install \
+    /usr/local/bin/brew install \
         faudio \
         libpng \
         mpg123 || true
 fi
 endgroup
 
-
-export CC="$(brew --prefix llvm)/bin/clang"
+export CC="$(/usr/local/bin/brew --prefix llvm)/bin/clang"
 export CXX="${CC}++"
-export BISON="$(brew --prefix bison)/bin/bison"
+export BISON="$(/usr/local/bin/brew --prefix bison)/bin/bison"
 
 # Xcode12 by default enables '-Werror,-Wimplicit-function-declaration' (49917738)
 # this causes wine(64) builds to fail so needs to be disabled.
 # https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes
 export CFLAGS="-g -O2 -Wno-implicit-function-declaration -Wno-deprecated-declarations -Wno-format"
-export LDFLAGS="-Wl,-headerpad_max_install_names"
+export LDFLAGS="-Wl,-headerpad_max_install_names,-L$(/usr/local/bin/brew --prefix freetype)/lib"
+export CPPFLAGS="-I$(/usr/local/bin/brew --prefix freetype)/include"
+export PKG_CONFIG_PATH="$(/usr/local/bin/brew --prefix freetype)/lib/pkgconfig"
 
 # avoid weird linker errors with Xcode 10 and later
 export MACOSX_DEPLOYMENT_TARGET=10.14
@@ -96,7 +97,7 @@ export MACOSX_DEPLOYMENT_TARGET=10.14
 # see https://github.com/Gcenx/macOS_Wine_builds/issues/17#issuecomment-750346843
 export CROSSCFLAGS=$([[ ${CX_MAJOR} < 21 ]] && echo "-g -O2 -fcommon" || echo "-g -O2")
 
-export SDL2_CFLAGS="-I$(brew --prefix sdl2)/include -I$(brew --prefix sdl2)/include/SDL2"
+export SDL2_CFLAGS="-I$(/usr/local/bin/brew --prefix sdl2)/include -I$(/usr/local/bin/brew --prefix sdl2)/include/SDL2"
 export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
 export ac_cv_lib_soname_vulkan=""
 
@@ -112,7 +113,6 @@ if [[ -d "${GITHUB_WORKSPACE}/sources" ]]; then
 fi
 tar xf ${CROSS_OVER_LOCAL_FILE}.tar.gz
 endgroup
-
 
 begingroup "Patch Add missing distversion.h"
 # Patch provided by Josh Dubois, CrossOver product manager, CodeWeavers.
@@ -155,7 +155,7 @@ if [[ ${CX_MAJOR} -ge 21 && ${CX_MAJOR} -lt 26 ]]; then
         endgroup
 
         begingroup "Installing dependencies for DXVK"
-        brew install \
+        /usr/local/bin/brew install \
             meson \
             glslang
         endgroup
@@ -185,12 +185,13 @@ if [[ ${CROSS_OVER_VERSION} == 26.1.0 ]]; then
 fi
 
 
-begingroup "Configure wine64-${CROSS_OVER_VERSION}"
-mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
-pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
+begingroup "Configure wine-${CROSS_OVER_VERSION}"
+mkdir -p ${BUILDROOT}/wine-${CROSS_OVER_VERSION}
+pushd ${BUILDROOT}/wine-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
     --disable-option-checking \
     --enable-win64 \
+    --enable-archs=i386,x86_64 \
     --disable-winedbg \
     --disable-tests \
     --without-alsa \
@@ -227,79 +228,23 @@ popd
 endgroup
 
 
-begingroup "Build wine64-${CROSS_OVER_VERSION}"
-pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
+begingroup "Build wine-${CROSS_OVER_VERSION}"
+pushd ${BUILDROOT}/wine-${CROSS_OVER_VERSION}
 make -j$(sysctl -n hw.ncpu 2>/dev/null)
 popd
 endgroup
 
-
-begingroup "Configure wine32on64-${CROSS_OVER_VERSION}"
-mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
-pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
-${WINE_CONFIGURE} \
-    --disable-option-checking \
-    --enable-win32on64 \
-    --disable-winedbg \
-    --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
-    --disable-tests \
-    --without-alsa \
-    --without-capi \
-    --with-coreaudio \
-    --with-cups \
-    --without-dbus \
-    --without-fontconfig \
-    --with-freetype \
-    --with-gettext \
-    --without-gettextpo \
-    --without-gphoto \
-    --with-gnutls \
-    --without-gssapi \
-    --without-gstreamer \
-    --without-inotify \
-    --without-krb5 \
-    --with-mingw \
-    --without-netapi \
-    --with-opencl \
-    --with-opengl \
-    --without-oss \
-    --with-pcap \
-    --with-pthread \
-    --without-pulse \
-    --without-sane \
-    --with-sdl \
-    --without-udev \
-    --with-unwind \
-    --without-usb \
-    --without-v4l2 \
-    --without-x \
-    --without-vulkan \
-    --disable-vulkan_1 \
-    --disable-winevulkan
-popd
-endgroup
-
-
-begingroup "Build wine32on64-${CROSS_OVER_VERSION}"
-pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
-make -k -j$(sysctl -n hw.activecpu 2>/dev/null)
-popd
-endgroup
-
-
-begingroup "Install wine32on64-${CROSS_OVER_VERSION}"
-pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
+begingroup "Install wine-${CROSS_OVER_VERSION}"
+pushd ${BUILDROOT}/wine-${CROSS_OVER_VERSION}
 make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
 endgroup
 
-
-begingroup "Install wine64-${CROSS_OVER_VERSION}"
-pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
-make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
+begingroup "Copying libMoltenVK.dylib for wine-${CROSS_OVER_VERSION}"
+pushd ${INSTALLROOT}
+cp ${GITHUB_WORKSPACE}/libMoltenVK.dylib ${WINE_INSTALLATION}/usr/local/lib/wine/x86_64-unix/libMoltenVK.dylib
 popd
 endgroup
-
 
 begingroup "Tar Wine"
 pushd ${INSTALLROOT}
